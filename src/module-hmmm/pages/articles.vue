@@ -225,9 +225,9 @@ export default {
         type: 'warning',
         center: true
       }).then(() => {
+        remove({ id: row.id })
         this.$message.success('删除成功!')
       })
-      await remove({ id: row.id })
       this.getList()
     }
   }
