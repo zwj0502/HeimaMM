@@ -4,7 +4,7 @@
       <div class="el-card_body">
         <!-- 头部导航+按钮 -->
         <el-row type="flex" justify="space-between" class="btn-wrapper">
-          <span style="fontsize: 12px; color: pink"
+          <span style="font-size: 12px; color: pink"
             >说明:目前支持学科和关键字条件筛选</span
           >
           <el-button type="success" size="small"
@@ -14,13 +14,15 @@
         <!-- 试题列表table，form表单 -->
         <el-form size="small" label-width="80px">
           <el-row>
+            <!-- 学科 -->
             <el-col :span="6">
-              <el-form-item label="学科" label-width="80px">
+              <el-form-item label="学科">
                 <el-select style="width: 100%">
                   <el-option label="区域一" value="shanghai"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
+            <!-- 二级目录 -->
             <el-col :span="6">
               <el-form-item label="二级目录">
                 <el-select style="width: 100%">
@@ -28,6 +30,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
+            <!-- 标签 -->
             <el-col :span="6">
               <el-form-item label="标签">
                 <el-select style="width: 100%">
@@ -35,11 +38,16 @@
                 </el-select>
               </el-form-item>
             </el-col>
+            <!-- 关键字 -->
             <el-col :span="6">
               <el-form-item label="关键字">
-                <el-input placeholder="审批人" style="width: 100%"></el-input>
+                <el-input
+                  placeholder="根据题干搜索"
+                  style="width: 100%"
+                ></el-input>
               </el-form-item>
             </el-col>
+            <!-- 试题类型 -->
             <el-col :span="6">
               <el-form-item label="试题类型">
                 <el-select style="width: 100%">
@@ -47,6 +55,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
+            <!-- 难度 -->
             <el-col :span="6">
               <el-form-item label="难度">
                 <el-select style="width: 100%">
@@ -54,6 +63,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
+            <!-- 方向 -->
             <el-col :span="6">
               <el-form-item label="方向">
                 <el-select style="width: 100%">
@@ -61,6 +71,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
+            <!-- 录入人 -->
             <el-col :span="6">
               <el-form-item label="录入人">
                 <el-select style="width: 100%">
@@ -68,16 +79,19 @@
                 </el-select>
               </el-form-item>
             </el-col>
+            <!-- 题目备注 -->
             <el-col :span="6">
               <el-form-item label="题目备注">
                 <el-input placeholder="审批人" style="width: 100%"></el-input>
               </el-form-item>
             </el-col>
+            <!-- 企业简称 -->
             <el-col :span="6">
               <el-form-item label="企业简称">
                 <el-input placeholder="审批人" style="width: 100%"></el-input>
               </el-form-item>
             </el-col>
+            <!-- 城市 -->
             <el-col :span="6">
               <el-form-item label="城市" class="city">
                 <el-select class="city-1">
@@ -88,6 +102,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
+            <!-- 清除和搜索按钮 -->
             <el-col :span="6">
               <el-form-item class="table_btn">
                 <el-button size="small">清除</el-button>
@@ -167,6 +182,22 @@
             </el-table-column>
           </el-table>
         </el-row>
+        <!-- 底部分页组件 -->
+        <el-row>
+          <!-- 分页功能 -->
+          <el-pagination
+            v-if="total > 0"
+            style="text-align: right; margin-top: 20px; margin-bottom: 15px"
+            layout="prev, pager, next, sizes, jumper"
+            :total="total"
+            :current-page.sync="query.page"
+            :page-size.sync="query.pagesize"
+            :page-sizes="[5, 10, 20, 30]"
+            background
+          >
+          </el-pagination>
+          <!-- 分页功能 end-->
+        </el-row>
       </div>
     </el-card>
   </div>
@@ -174,44 +205,35 @@
 
 <script>
 export default {
-  methods: {
-    handleClick (row) {
-      console.log(row)
-    }
-  },
-
   data () {
     return {
+      // 页面数量总条数
+      total: 0,
       activeName: 'first',
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1517 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1519 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1516 弄',
-        zip: 200333
-      }]
+      // 区域列表
+      questionList: [],
+      // 城市列表
+      city: [],
+      // 表格渲染需要的数据
+      tableData: [],
+      // 表格数据查询信息
+      query: {
+        page: 1, // 否 1 当前页数
+        pagesize: 5, // 每页显示多少  /** */
+        subjectID: null, // 学科
+        difficulty: null, // 难度
+        questionType: null, // 试题难度
+        tags: null, // 标签名称
+        province: null, // 企业所在地省份
+        city: null, // 企业所在城市
+        keyword: null, // 关键字
+        remarks: null, // 题目备注
+        shortName: null, // 企业简称
+        direction: null, // 方向
+        creatorID: null, // 录入人
+        catalogID: null, // 目录
+        chkState: null // 审核状态
+      }
     }
   }
 }
