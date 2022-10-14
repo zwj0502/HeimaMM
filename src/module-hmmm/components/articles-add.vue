@@ -86,6 +86,7 @@ export default {
         videoUrl: ''
       }
       this.$parent.getList()
+      this.$message.success('新增成功')
       this.$emit('update:isAddDialog', false)
     }
   }

@@ -221,15 +221,18 @@ export default {
       }
     },
     async del (row) {
-      try {
-        await remove({ id: row.id })
-        this.getList()
-      } catch (error) {
-        console.log(error)
-      }
+      this.$confirm('此操作将永久删除该文章,是否继续?', '提示', {
+        type: 'warning',
+        center: true
+      }).then(() => {
+        this.$message.success('删除成功!')
+      })
+      await remove({ id: row.id })
+      this.getList()
     }
   }
 }
+
 </script>
 
 <style scoped lang='less'>
