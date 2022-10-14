@@ -231,9 +231,9 @@ export default {
         center: true
       }).then(() => {
         remove({ id: row.id })
+        this.getList()
         this.$message.success('删除成功!')
       })
-      this.getList()
     }
   }
 }
