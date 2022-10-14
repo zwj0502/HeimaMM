@@ -9,6 +9,15 @@ export default {
     value: '禁用'
   }
   ],
+  state: [{
+    id: '1',
+    value: '开启'
+  },
+  {
+    id: '0',
+    value: '屏蔽'
+  }
+  ],
   role: [{
     id: '1',
     value: '管理员'

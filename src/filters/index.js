@@ -16,6 +16,24 @@ export function timeAgo (time) {
   }
 }
 
+export function timeFilters (type) { // 时间
+  var time = new Date(type)
+
+  var year = time.getFullYear() // 年
+
+  var month = (time.getMonth() + 1 + '').padStart(2, '0') // 月
+
+  var date = (time.getDate() + '').padStart(2, '0') // 日
+
+  var hour = (time.getHours() + '').padStart(2, '0') // 时
+
+  var minutes = (time.getMinutes() + '').padStart(2, '0') // 分
+
+  var seconds = (time.getSeconds() + '').padStart(2, '0') // 秒
+
+  return `${year}-${month}-${date} ${hour}:${minutes}:${seconds}`
+}
+
 export function parseTime (time, cFormat) {
   if (arguments.length === 0) {
     return null
