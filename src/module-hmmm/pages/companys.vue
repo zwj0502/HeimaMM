@@ -12,26 +12,41 @@
           <el-form-item label="标签名称" style="margin-right: 35px">
             <el-input v-model="formData.tags" placeholder="请输入"></el-input>
           </el-form-item>
-          <el-form-item label="城市" style="margin-right: 35px">
-            <el-select v-model="formData.city" placeholder="请选择">
+
+          <el-form-item label="城市" prop="province" style="margin-right: 35px">
+            <el-select
+              class="filter-item"
+              style="width: 200px"
+              v-model="formData.province"
+              @keyup.enter="handleFilter"
+              @change="handleProvince"
+              filterable
+            >
               <el-option
-                v-for="item in state"
-                :key="item.id"
-                :label="item.value"
-                :value="item.id"
+                v-for="item in citySelect.province"
+                :key="item"
+                :label="item"
+                :value="item"
               ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="地区" style="margin-right: 35px">
-            <el-select v-model="formData.area" placeholder="请选择">
+            <el-select
+              class="filter-item"
+              style="width: 200px"
+              v-model="formData.city"
+              @keyup.enter="handleFilter"
+              filterable
+            >
               <el-option
-                v-for="item in state"
-                :key="item.id"
-                :label="item.value"
-                :value="item.id"
+                v-for="item in citySelect.cityDate"
+                :key="item"
+                :label="item"
+                :value="item"
               ></el-option>
             </el-select>
           </el-form-item>
+
           <el-form-item label="企业简称">
             <el-input
               v-model="formData.shortName"
@@ -104,14 +119,23 @@
               circle
               plain
             ></el-button>
-            <el-button
-              @click="disabled(row)"
-              class="disabled"
-              type="warning"
-              icon="el-icon-close"
-              circle
-              plain
-            ></el-button>
+
+            <el-tooltip
+              class="item"
+              effect="dark"
+              :content="row.state === 1 ? '禁用' : '启用'"
+              placement="top-start"
+            >
+              <el-button
+                @click="disabled(row)"
+                :class="row.state === 1 ? 'disabled' : 'success'"
+                :type="row.state === 1 ? 'warning' : 'success'"
+                :icon="row.state === 1 ? 'el-icon-close' : 'el-icon-check'"
+                circle
+                plain
+              ></el-button>
+            </el-tooltip>
+
             <el-button
               @click="del(row)"
               class="remove"
@@ -133,17 +157,19 @@
     </div>
     <CompanysAdd
       :dialogFormVisible.sync="dialogFormVisible"
-      :formBase="row"
       ref="addForm"
+      @newDataes="getList"
+      :row="row"
     />
   </div>
 </template>
 
 <script>
 import CompanysAdd from '../components/companys-add.vue'
-import { list, remove } from '@/api/hmmm/companys.js'
+import { list, remove, disabled } from '@/api/hmmm/companys.js'
 import state from '@/api/base/baseApi.js'
 import PageTool from '../../module-dashboard/components/pageTool.vue'
+import { provinces, citys } from '@/api/hmmm/citys.js'
 export default {
   name: 'Companyments',
   components: {
@@ -156,7 +182,7 @@ export default {
       formData: {
         tags: '',
         city: '',
-        area: '',
+        province: '',
         shortName: '',
         state: ''
       },
@@ -166,13 +192,27 @@ export default {
       loading: false,
       count: 0,
       page: 1,
-      pagesize: 10
+      pagesize: 10,
+      citySelect: {
+        province: [],
+        cityDate: []
+      }
     }
   },
   created () {
     this.getList()
+    this.getCityData()
   },
   methods: {
+    // 获取省
+    getCityData: function () {
+      this.citySelect.province = provinces()
+    },
+    // 选省获取到市
+    handleProvince: function (e) {
+      this.citySelect.cityDate = citys(e)
+      this.formData.city = this.citySelect.cityDate[0]
+    },
     async getList () {
       try {
         this.loading = true
@@ -212,31 +252,53 @@ export default {
         state: ''
       }
     },
-    search () { // 根据关键字,进行数据的搜索
+    async search () {
       try {
-        this.loading = true
-        this.list = this.list.filter(item => {
-          if (item.title.includes(this.formData.keywords) && +this.formData.state === item.state) {
-            return item
-          } else if (this.formData.keywords === '' && this.formData.state === '') {
-            this.getList()
-          }
-        })
+        // this.loading = true
+        const { data } = await list({ tags: this.formData.tags, province: this.formData.province, city: this.formData.city, shortName: this.formData.shortName, state: this.formData.state })
+        console.log(data)
+        this.list = data.items
+        this.count = data.counts
+        this.page = data.page
+        this.pagesize = data.pagesize
+        this.loading = false
       } catch (error) {
         console.log(error)
-      } finally {
-        this.loading = false
       }
+
+      // try {
+      //   this.loading = true
+      //   this.list = this.list.filter(item => {
+      //     if (item.title.includes(this.formData.keywords) && +this.formData.state === item.state) {
+      //       return item
+      //     } else if (this.formData.keywords === '' && this.formData.state === '') {
+      //       this.getList()
+      //     }
+      //   })
+      // } catch (error) {
+      //   console.log(error)
+      // } finally {
+      //   this.loading = false
+      // }
     },
     addBtn () {
       this.dialogFormVisible = true
     },
     edit (row) {
+      const { addDate, city, company, creatorID, id, isFamous, number, province, remarks, shortName, state, tags } = row
+      const rows = { addDate, city, company, creatorID, id, isFamous, number, province, remarks, shortName, state, tags }
+      if (rows.isFamous === 0) {
+        rows.isFamous = false
+      } else if (rows.isFamous === 1) {
+        rows.isFamous = true
+      }
+      this.$refs.addForm.ruleInline = { ...rows }
       this.dialogFormVisible = true
-      this.$refs.addForm.ruleInline = { ...row }
-      this.row = row
     },
-    disabled (row) { },
+    async disabled (row) {
+      row.state = +!row.state
+      await disabled(row)
+    },
     del (row) {
       this.$confirm('此操作将永久删除该文章,是否继续?', '提示', {
         type: 'warning',
@@ -274,6 +336,11 @@ export default {
   color: #e6a23c;
   background: #fdf6ec;
   border-color: #f5dab1;
+}
+.success {
+  color: #67c23a;
+  background: #f0f9eb;
+  border-color: #c2e7b0;
 }
 .remove {
   color: #f56c6c;
