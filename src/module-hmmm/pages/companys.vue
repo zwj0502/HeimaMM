@@ -131,17 +131,24 @@
         @pageChange="pageChange"
       />
     </div>
+    <CompanysAdd
+      :dialogFormVisible.sync="dialogFormVisible"
+      :formBase="row"
+      ref="addForm"
+    />
   </div>
 </template>
 
 <script>
+import CompanysAdd from '../components/companys-add.vue'
 import { list, remove } from '@/api/hmmm/companys.js'
 import state from '@/api/base/baseApi.js'
 import PageTool from '../../module-dashboard/components/pageTool.vue'
 export default {
   name: 'Companyments',
   components: {
-    PageTool
+    PageTool,
+    CompanysAdd
   },
   data () {
     return {
@@ -153,7 +160,9 @@ export default {
         shortName: '',
         state: ''
       },
+      dialogFormVisible: false,
       state: state.state,
+      row: {},
       loading: false,
       count: 0,
       page: 1,
@@ -220,9 +229,12 @@ export default {
       }
     },
     addBtn () {
-
+      this.dialogFormVisible = true
     },
     edit (row) {
+      this.dialogFormVisible = true
+      this.$refs.addForm.ruleInline = { ...row }
+      this.row = row
     },
     disabled (row) { },
     del (row) {
