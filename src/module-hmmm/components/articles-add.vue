@@ -14,7 +14,6 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="文章内容：" prop="articleBody">
-          <!-- <el-input v-model="ruleForm.content" type="textarea"></el-input> -->
           <Editor v-model="ruleForm.articleBody" />
         </el-form-item>
         <el-form-item label="视频地址：" prop="videoUrl">
