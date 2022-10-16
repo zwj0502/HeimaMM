@@ -11,7 +11,7 @@
         >
           <el-form-item label="关键字">
             <el-input
-              v-model="formData.keywords"
+              v-model="formData.keyword"
               placeholder="根据文章标题搜索"
             ></el-input>
           </el-form-item>
@@ -123,8 +123,10 @@ export default {
     return {
       list: [],
       formData: {
-        keywords: '',
-        state: ''
+        keyword: '',
+        state: '',
+        page: 1,
+        pagesize: 10
       },
       state: state.state,
       count: 0,
@@ -148,9 +150,8 @@ export default {
         this.count = data.counts
         this.page = data.page
         this.pagesize = data.pagesize
+      } finally {
         this.loading = false
-      } catch (error) {
-        console.log(error)
       }
     },
     async pageChange (node) {
@@ -176,24 +177,20 @@ export default {
     },
     clear () {
       this.formData = {
-        keywords: '',
+        keyword: '',
         state: ''
       }
+      this.getList()
     },
-    search () { // 根据关键字,进行数据的搜索
-      try {
-        this.loading = true
-        this.list = this.list.filter(item => {
-          if (item.title.includes(this.formData.keywords) && +this.formData.state === item.state) {
-            return item
-          } else if (this.formData.keywords === '' && this.formData.state === '') {
-            this.getList()
-          }
-        })
-      } catch (error) {
-        console.log(error)
-      } finally {
-        this.loading = false
+    async search () {
+      if (this.formData.state) {
+        const { data } = await list({ keyword: this.formData.keyword, state: this.formData.state, page: this.formData.page, pagesize: this.formData.pagesize })
+        this.list = data.items
+        this.count = data.counts
+      } else {
+        const { data } = await list({ keyword: this.formData.keyword, page: this.formData.page, pagesize: this.formData.pagesize })
+        this.list = data.items
+        this.count = data.counts
       }
     },
     addBtn () {
@@ -218,17 +215,20 @@ export default {
         }
       } catch (error) {
         console.log(error)
+      } finally {
+        this.loading = false
       }
     },
-    async del (row) {
+    del (row) {
+      this.loading = true
       this.$confirm('此操作将永久删除该文章,是否继续?', '提示', {
-        type: 'warning',
-        center: true
+        type: 'warning'
       }).then(() => {
         remove({ id: row.id })
         this.getList()
         this.$message.success('删除成功!')
       })
+      this.loading = false
     }
   }
 }
