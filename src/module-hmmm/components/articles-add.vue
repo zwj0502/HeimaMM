@@ -16,9 +16,9 @@
         <el-form-item label="文章内容：" prop="articleBody">
           <Editor v-model="ruleForm.articleBody" />
         </el-form-item>
-        <el-form-item label="视频地址：" prop="videoUrl">
+        <el-form-item label="视频地址：" prop="videoURL">
           <el-input
-            v-model="ruleForm.videoUrl"
+            v-model="ruleForm.videoURL"
             placeholder="请输入视频地址"
           ></el-input>
         </el-form-item>
@@ -45,7 +45,7 @@ export default {
       ruleForm: {
         title: '',
         articleBody: '',
-        videoUrl: ''
+        videoURL: ''
       },
       rules: {
         title: [
@@ -73,20 +73,15 @@ export default {
       this.ruleForm = {
         title: '',
         articleBody: '',
-        videoUrl: ''
+        videoURL: ''
       }
       this.$emit('update:isAddDialog', false)
     },
     async mayBe () {
       this.ruleForm.id ? await update(this.ruleForm) : await add(this.ruleForm)
-      this.ruleForm = {
-        title: '',
-        articleBody: '',
-        videoUrl: ''
-      }
       this.$parent.getList()
+      this.handleClose()
       this.$message.success('操作成功')
-      this.$emit('update:isAddDialog', false)
     }
   }
 }

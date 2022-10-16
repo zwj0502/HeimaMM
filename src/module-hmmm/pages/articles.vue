@@ -50,6 +50,14 @@
         <el-table-column type="index" label="序号" width="60">
         </el-table-column>
         <el-table-column prop="title" label="文章标题" width="400">
+          <template slot-scope="scope">
+            <span style="margin-right: 10px">{{ scope.row.title }}</span>
+            <i
+              style="color: #2138ff"
+              :class="getVideo(scope.row)"
+              @click="videoDialogVisible = true"
+            ></i>
+          </template>
         </el-table-column>
         <el-table-column prop="visits" label="阅读数" width="80">
         </el-table-column>
@@ -100,7 +108,14 @@
         @pageChange="pageChange"
       />
     </div>
-
+    <!-- 视频弹出框 -->
+    <el-dialog
+      title="视频播放器"
+      :visible="videoDialogVisible"
+      width="50%"
+      @close="videoDialogVisible = false"
+    >
+    </el-dialog>
     <articlePreview :previewDialog.sync="previewDialog" :row="row" />
     <articleAdd :isAddDialog.sync="isAddDialog" ref="addForm" />
   </div>
@@ -135,7 +150,8 @@ export default {
       isAddDialog: false,
       page: 1,
       pagesize: 10,
-      loading: false
+      loading: false,
+      videoDialogVisible: false
     }
   },
   created () {
@@ -197,6 +213,7 @@ export default {
       this.isAddDialog = true
     },
     edit (row) {
+      console.log(row)
       this.$refs.addForm.ruleForm = { ...row }
       this.isAddDialog = true
     },
@@ -219,16 +236,20 @@ export default {
         this.loading = false
       }
     },
-    del (row) {
-      this.loading = true
-      this.$confirm('此操作将永久删除该文章,是否继续?', '提示', {
-        type: 'warning'
-      }).then(() => {
-        remove({ id: row.id })
+    async del (row) {
+      try {
+        await this.$confirm('此操作将永久删除该文章,是否继续?', '提示', {
+          type: 'warning'
+        })
+        await remove({ id: row.id })
         this.getList()
         this.$message.success('删除成功!')
-      })
-      this.loading = false
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    getVideo (row) {
+      if (row.videoURL) return 'el-icon-film'
     }
   }
 }
