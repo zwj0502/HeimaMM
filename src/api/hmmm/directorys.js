@@ -15,6 +15,9 @@ export const list = data => createAPI('/directorys', 'get', data)
 // 目录简单列表
 export const simple = data => createAPI('/directorys/simple', 'get', data)
 
+// 目录下拉列表的获取(虎加，不加有重名问题)
+export const simpleDirectorys = data => createAPI('/directorys/simple', 'get', data)
+
 // 目录详情
 export const detail = data => createAPI(`/directorys/${data.id}`, 'get', data)
 

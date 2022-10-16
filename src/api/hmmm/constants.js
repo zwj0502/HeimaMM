@@ -66,32 +66,40 @@ export const direction = [
 // 精品审核
 export const chkType = [
   {
-    value: 1,
+    value: 0,
     label: '待审核'
   },
   {
-    value: 2,
-    label: '通过'
+    value: 1,
+    label: '已审核'
   },
   {
-    value: 3,
-    label: '拒绝'
+    value: 2,
+    label: '已拒绝'
   }
 ]
 
 // 发布状态
 export const publishType = [
+  // {
+  //   value: 1,
+  //   label: '已上架'
+  // },
+  // {
+  //   value: 2,
+  //   label: '已发布'
+  // },
+  // {
+  //   value: 3,
+  //   label: '已下架'
+  // }
+  {
+    value: 0,
+    label: '已下架'
+  },
   {
     value: 1,
-    label: '待发布'
-  },
-  {
-    value: 2,
-    label: '已发布'
-  },
-  {
-    value: 3,
-    label: '已下架'
+    label: '已上架'
   }
 ]
 
