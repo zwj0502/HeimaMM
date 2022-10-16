@@ -253,33 +253,15 @@ export default {
       }
     },
     async search () {
-      try {
-        // this.loading = true
+      if (this.formData.state) {
         const { data } = await list({ tags: this.formData.tags, province: this.formData.province, city: this.formData.city, shortName: this.formData.shortName, state: this.formData.state })
-        console.log(data)
         this.list = data.items
         this.count = data.counts
-        this.page = data.page
-        this.pagesize = data.pagesize
-        this.loading = false
-      } catch (error) {
-        console.log(error)
+      } else {
+        const { data } = await list({ tags: this.formData.tags, province: this.formData.province, city: this.formData.city, shortName: this.formData.shortName })
+        this.list = data.items
+        this.count = data.counts
       }
-
-      // try {
-      //   this.loading = true
-      //   this.list = this.list.filter(item => {
-      //     if (item.title.includes(this.formData.keywords) && +this.formData.state === item.state) {
-      //       return item
-      //     } else if (this.formData.keywords === '' && this.formData.state === '') {
-      //       this.getList()
-      //     }
-      //   })
-      // } catch (error) {
-      //   console.log(error)
-      // } finally {
-      //   this.loading = false
-      // }
     },
     addBtn () {
       this.dialogFormVisible = true
@@ -299,15 +281,17 @@ export default {
       row.state = +!row.state
       await disabled(row)
     },
-    del (row) {
-      this.$confirm('此操作将永久删除该文章,是否继续?', '提示', {
-        type: 'warning',
-        center: true
-      }).then(() => {
-        remove({ id: row.id })
+    async del (row) {
+      try {
+        await this.$confirm('此操作将永久删除该文章,是否继续?', '提示', {
+          type: 'warning'
+        })
+        await remove({ id: row.id })
         this.getList()
         this.$message.success('删除成功!')
-      })
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }
