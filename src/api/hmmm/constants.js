@@ -103,6 +103,8 @@ export const publishType = [
   }
 ]
 
+// 每个选项都是一个对象，其中包含了选项前字母，渲染
+// 选项的内容，选项的图片地址，是否是正确选项(true/false)
 export const array = [
   {
     code: 'A', // 代码

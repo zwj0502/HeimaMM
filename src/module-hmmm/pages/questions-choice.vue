@@ -53,7 +53,12 @@
             <!-- 标签 -->
             <el-col :span="6">
               <el-form-item label="标签">
-                <el-select style="width: 100%" v-model="query.tags">
+                <el-select
+                  multiple
+                  allow-create
+                  style="width: 100%"
+                  v-model="query.tags"
+                >
                   <!-- <el-option label="区域一" value="shanghai"></el-option> -->
                   <el-option
                     v-for="(item, index) in tagsList"
@@ -268,7 +273,12 @@
               align="center"
             >
               <template slot-scope="{ row }">
-                <el-button type="text" size="small">预览</el-button>
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="PreviewQuestion(row)"
+                  >预览</el-button
+                >
                 <el-button
                   type="text"
                   size="small"
@@ -276,13 +286,21 @@
                   @click="questionCheck(row)"
                   >审核</el-button
                 >
-                <el-button type="text" size="small" @click="editQuestion(row)"
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="editQuestion(row)"
+                  :disabled="row.publishState === 1"
                   >修改</el-button
                 >
                 <el-button type="text" size="small" @click="putQuestion(row)">
                   {{ row.publishState === 1 ? '下架' : '上架' }}
                 </el-button>
-                <el-button type="text" size="small" @click="delQuestion(row)"
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="delQuestion(row)"
+                  :disabled="row.publishState === 1"
                   >删除</el-button
                 >
               </template>
@@ -315,11 +333,16 @@
       ref="QuestionsCheck"
       @getQuestionList="getQuestionList"
     ></QuestionsCheck>
+    <!-- 试题预览弹窗 -->
+    <QuestionsPreview
+      :questionPreview.sync="questionPreview"
+      ref="QuestionsPreview"
+    />
   </div>
 </template>
 
 <script>
-import { choice, choicePublish, remove } from '../../api/hmmm/questions'
+import { choice, choicePublish, remove, detail as questionDetail } from '../../api/hmmm/questions'
 import { simple } from '../../api/hmmm/subjects'
 import { simpleDirectorys } from '../../api/hmmm/directorys'
 import { simpleTags } from '../../api/hmmm/tags'
@@ -327,9 +350,10 @@ import { getUserList } from '../../api/base/users'
 import { provinces, citys } from '../../api/hmmm/citys'
 import { questionType, difficulty, chkType, publishType, direction } from '../../api/hmmm/constants'
 import QuestionsCheck from '../components/questions-check.vue'
+import QuestionsPreview from '../components/questions-preview.vue'
 export default {
   name: 'questionChoice',
-  components: { QuestionsCheck },
+  components: { QuestionsCheck, QuestionsPreview },
   data () {
     return {
       // 所有城市
@@ -373,8 +397,9 @@ export default {
       catalogs: [],
       tagsList: [],
       // 控制试题审核是否显示的变量
-      questionCheckShow: false
+      questionCheckShow: false,
       // 控制显示上架还是下架按钮
+      questionPreview: false
     }
   },
   created () {
@@ -584,10 +609,10 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         })
-        const res = await remove({
+        await remove({
           id: row.id
         })
-        console.log(res)
+        // console.log(res)
         // 删除成功后的提示
         this.$message.success('删除成功')
         // 刷新列表
@@ -595,6 +620,21 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    // 预览弹层，把row的值传过去
+    async PreviewQuestion (row) {
+      // console.log(row)
+      // 这里要根据row的id去获取更多的题目信息，表格给的不够多
+      const { data } = await questionDetail({
+        id: row.id
+      })
+      console.log(data)
+      this.questionPreview = true
+      // 这里把值传过去前，先对后端返回的数组进行排序(按code中的字母大写的选项)
+      data.options.sort((a, b) => {
+        return a.code.localeCompare(b.code)
+      })
+      this.$refs.QuestionsPreview.questionItem = data
     }
   }
 }
