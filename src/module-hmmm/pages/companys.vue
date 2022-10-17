@@ -153,6 +153,7 @@
         :paginationPagesize.sync="pagesize"
         :paginationPage.sync="page"
         @pageChange="pageChange"
+        @pageSizeChange="pageSizeChange"
       />
     </div>
     <CompanysAdd
@@ -239,6 +240,12 @@ export default {
         console.log(error)
       }
     },
+    async pageSizeChange (node) {
+      console.log(node)
+      this.pagesize = node
+      const { data } = await list({ page: this.page, pagesize: this.pagesize })
+      this.tableData = data.items
+    },
     stateCode (row, column, cellValue) {
       const obj = this.state.find(item => +item.id === cellValue)
       return obj.value
@@ -267,14 +274,14 @@ export default {
       this.dialogFormVisible = true
     },
     edit (row) {
-      const { addDate, city, company, creatorID, id, isFamous, number, province, remarks, shortName, state, tags } = row
-      const rows = { addDate, city, company, creatorID, id, isFamous, number, province, remarks, shortName, state, tags }
-      if (rows.isFamous === 0) {
-        rows.isFamous = false
-      } else if (rows.isFamous === 1) {
-        rows.isFamous = true
+      // const { addDate, city, company, creatorID, id, isFamous, number, province, remarks, shortName, state, tags } = row
+      // const rows = { addDate, city, company, creatorID, id, isFamous, number, province, remarks, shortName, state, tags }
+      if (row.isFamous === 0) {
+        row.isFamous = false
+      } else if (row.isFamous === 1) {
+        row.isFamous = true
       }
-      this.$refs.addForm.ruleInline = { ...rows }
+      this.$refs.addForm.ruleInline = { ...row }
       this.dialogFormVisible = true
     },
     async disabled (row) {
