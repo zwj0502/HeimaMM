@@ -55,7 +55,7 @@
             <i
               style="color: #2138ff"
               :class="getVideo(scope.row)"
-              @click="videoDialogVisible = true"
+              @click="Video(row)"
             ></i>
           </template>
         </el-table-column>
@@ -106,6 +106,7 @@
         :paginationPagesize.sync="pagesize"
         :paginationPage.sync="page"
         @pageChange="pageChange"
+        @pageSizeChange="pageSizeChange"
       />
     </div>
     <!-- 视频弹出框 -->
@@ -115,6 +116,13 @@
       width="50%"
       @close="videoDialogVisible = false"
     >
+      <video
+        :src="videoURL"
+        autoplay
+        controls
+        loop
+        style="width: 100%; height: 100%"
+      ></video>
     </el-dialog>
     <articlePreview :previewDialog.sync="previewDialog" :row="row" />
     <articleAdd :isAddDialog.sync="isAddDialog" ref="addForm" />
@@ -151,7 +159,8 @@ export default {
       page: 1,
       pagesize: 10,
       loading: false,
-      videoDialogVisible: false
+      videoDialogVisible: false,
+      videoURL: ''
     }
   },
   created () {
@@ -182,6 +191,12 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    async pageSizeChange (node) {
+      console.log(node)
+      this.pagesize = node
+      const { data } = await list({ page: this.page, pagesize: this.pagesize })
+      this.tableData = data.items
     },
     stateCode (row, column, cellValue) {
       const obj = this.state.find(item => +item.id === cellValue)
@@ -250,6 +265,10 @@ export default {
     },
     getVideo (row) {
       if (row.videoURL) return 'el-icon-film'
+    },
+    Video (row) {
+      this.videoURL = row.videoURL
+      this.videoDialogVisible = true
     }
   }
 }
