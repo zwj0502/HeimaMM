@@ -15,6 +15,9 @@ export const list = data => createAPI('/tags', 'get', data)
 // 标签简单列表
 export const simple = data => createAPI('/tags/simple', 'get', data)
 
+// 标签简单列表(虎加)
+export const simpleTags = data => createAPI('/tags/simple', 'get', data)
+
 // 标签详情
 export const detail = data => createAPI(`/tags/${data.id}`, 'get', data)
 
