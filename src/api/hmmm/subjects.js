@@ -12,7 +12,7 @@ import { createAPI } from '@/utils/request'
 // 学科列表
 export const list = params => createAPI('/subjects', 'get', params)
 
-// 学科简单列表
+// 学科简单列表(作下拉框用)
 export const simple = data => createAPI('/subjects/simple', 'get', data)
 
 // 学科详情

@@ -66,31 +66,200 @@ export const direction = [
 // 精品审核
 export const chkType = [
   {
-    value: 1,
+    value: 0,
     label: '待审核'
   },
   {
-    value: 2,
-    label: '通过'
+    value: 1,
+    label: '已审核'
   },
   {
-    value: 3,
-    label: '拒绝'
+    value: 2,
+    label: '已拒绝'
   }
 ]
 
 // 发布状态
 export const publishType = [
+  // {
+  //   value: 1,
+  //   label: '已上架'
+  // },
+  // {
+  //   value: 2,
+  //   label: '已发布'
+  // },
+  // {
+  //   value: 3,
+  //   label: '已下架'
+  // }
+  {
+    value: 0,
+    label: '已下架'
+  },
   {
     value: 1,
-    label: '待发布'
+    label: '已上架'
+  }
+]
+
+// 每个选项都是一个对象，其中包含了选项前字母，渲染
+// 选项的内容，选项的图片地址，是否是正确选项(true/false)
+export const array = [
+  {
+    code: 'A', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
   },
   {
-    value: 2,
-    label: '已发布'
+    code: 'B', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
   },
   {
-    value: 3,
-    label: '已下架'
+    code: 'C', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'D', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'E', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'F', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'G', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'H', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'I', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'J', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'K', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'L', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'M', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'N', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'O', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'P', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'Q', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'R', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'S', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'T', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'U', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'V', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'W', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'X', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'Y', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
+  },
+  {
+    code: 'Z', // 代码
+    title: '', // 标题
+    img: '', // 图片URL
+    isRight: false // 是否正确答案 true/false
   }
 ]

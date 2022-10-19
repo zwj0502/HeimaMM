@@ -111,15 +111,9 @@ export default {
     },
 
     async getDirectorys () {
-      if (this.TagsList.status) {
-        const { data } = await list({ tagName: this.value, state: this.value1 })
-        this.TagsList = data.items
-        this.counts = data.counts
-      } else {
-        const { data } = await list({ tagName: this.value, state: this.value1 })
-        this.TagsList = data.items
-        this.counts = data.counts
-      }
+      const { data } = await list({ tagName: this.value, state: this.value1 })
+      this.TagsList = data.items
+      this.counts = data.counts
     },
     onDirectorys () {
       this.dialogVisible = true
