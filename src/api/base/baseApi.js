@@ -9,6 +9,19 @@ export default {
     value: '禁用'
   }
   ],
+  types: [{
+    id: '1',
+    value: '单选'
+  },
+  {
+    id: '2',
+    value: '多选'
+  },
+  {
+    id: '3',
+    value: '简答'
+  }
+  ],
   state: [{
     id: '1',
     value: '开启'
