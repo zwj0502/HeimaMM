@@ -26,7 +26,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">{{$t('table.cancel')}}</el-button>
+        <el-button @click="handerclone">{{$t('table.cancel')}}</el-button>
         <el-button type="primary" @click="handleAdd('formBase')">{{$t('table.confirm')}}</el-button>
       </div>
     </el-dialog>
@@ -146,9 +146,10 @@ export default {
       }
     },
     // 退出
-    handleClose () {
-      this.handerclone()
-    },
+    // handleClose () {
+    //   console.log(1)
+    //   // this.handerclone()
+    // },
     // 表单重置
     handleResetForm () {
       this.formBase = {

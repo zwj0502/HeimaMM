@@ -195,13 +195,16 @@ export default {
     },
     // 退出
     handleClose () {
-      this.$emit('handleCloseModal')
+      // this.$emit('handleCloseModal')
+      // console.log(1)
+      this.dialogFormH()
     },
     // 菜单和权限点选择：编辑
     handle_Edit (object) {
       update(this.formMenu).then(() => {
         this.$emit('handleCloseModal')
         this.$emit('newDataes', this.formMenu)
+        this.dialogFormH()
       })
     },
     // 菜单和权限点选择：添加
@@ -212,6 +215,7 @@ export default {
         // this.$emit('handleCloseModal')
         _this.dialogFormH()
         this.$emit('newDataes')
+        this.dialogFormH()
       })
     },
     handle_Add (object) {
