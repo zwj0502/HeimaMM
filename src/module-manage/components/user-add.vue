@@ -1,70 +1,47 @@
 <template>
   <div class="add-form">
-    <el-dialog :title="text+pageTitle" :visible.sync="dialogFormVisible">
-      <el-form
-        :rules="ruleInline"
-        ref="dataForm"
-        :model="formBase"
-        label-position="left"
-        label-width="120px"
-        style="width: 400px; margin-left:120px;"
-      >
+    <el-dialog :title="title" :visible="visible" @close="handerclose">
+      <el-form :model="ruleForm" ref="dataForm" label-width="100px">
+  <!-- <el-form-item label="账号" prop="account">
+    <el-input v-model="ruleForm.account"></el-input>
+  </el-form-item> -->
+  <el-form-item label="用户名" prop="username" :rules="[
+      { required: true, message: '请输入用户名', trigger: 'blur' }
+    ]">
+    <el-input v-model="ruleForm.username"></el-input>
+  </el-form-item>
+  <el-form-item label="密码" prop="password" :rules="[
+      { required: true, message: '请输入密码', trigger: 'blur' }
+    ]" >
+    <el-input v-model="ruleForm.password"></el-input>
+  </el-form-item>
 
-        <el-form-item :label="$t('table.username')" prop="username">
-          <el-input v-model="formBase.username"></el-input>
-        </el-form-item>
-        <el-form-item :label="$t('table.email')" prop="email">
-          <el-input v-model="formBase.email"></el-input>
-        </el-form-item>
-        <el-form-item
-          :label="$t('table.paddword')"
-          prop="password"
-          v-if="formBase.password!=undefined"
-        >
-          <el-input v-model="formBase.password"></el-input>
-        </el-form-item>
+  <el-form-item label="角色" prop="role" :rules="[
+      { required: true, message: '请输入角色', trigger: 'blur' }
+    ]">
+    <el-input v-model="ruleForm.role"></el-input>
+  </el-form-item>
+  <el-form-item label="联系电话" prop="phone" :rules="[
+      { required: true, message: '请输入联系电话', trigger: 'blur' }
+    ]">
+    <el-input v-model="ruleForm.phone"></el-input>
+  </el-form-item>
+  <el-form-item label="邮箱" prop="email"  :rules="[
+      { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+      { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+    ]">
+    <el-input v-model="ruleForm.email"
 
-        <!-- 角色 -->
-        <el-form-item :label="$t('table.role')" prop="role">
-          <el-input v-model="formBase.role"></el-input>
-        </el-form-item>
-        <!-- 权限组 -->
-        <el-form-item :label="$t('table.permissionUser')" prop="permission_group_id">
-          <el-select class="filter-item" v-model="formBase.permission_group_id">
-            <el-option
-              v-for="item in PermissionGroupsList"
-              :value="item.id"
-              :key="item.key"
-              :label="item.title"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item :label="$t('table.phone')" prop="phone">
-          <el-input v-model="formBase.phone"></el-input>
-        </el-form-item>
-
-        <!-- 头像上传下一个版本再做 -->
-        <!-- <el-form-item :label="$t('table.avatar')" prop="avatar">
-            <el-upload
-              class="upload-demo"
-              :action="importFileUrl"
-              :on-change="handleChange"
-              :file-list="fileList" accept="image/jpeg,image/gif,image/png,image/bmp"
-              :before-upload="beforeAvatarUpload">
-              <el-button size="small" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-            </el-upload>
-        </el-form-item>-->
-        <el-form-item :label="$t('table.introduction')">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            placeholder="Please input"
-            v-model="formBase.introduction"
-          ></el-input>
-        </el-form-item>
-      </el-form>
+    ></el-input>
+  </el-form-item>
+  <el-form-item label="权限组" prop="permission_group_id" :rules="[
+      { required: true, message: '请输入角色', trigger: 'blur' }
+    ]">
+    <el-select v-model="ruleForm.permission_group_id" placeholder="权限组id" @focus="getselete">
+      <el-option v-for="item in  PermissionGroupsList" :key="item.id" :label="item.title" :value="item.id"></el-option>
+    </el-select>
+  </el-form-item>
+  </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">{{$t('table.cancel')}}</el-button>
         <el-button type="primary" @click="createData">{{$t('table.confirm')}}</el-button>
@@ -74,59 +51,82 @@
 </template>
 
 <script>
-import { detail, update, add } from '@/api/base/users'
+import { update, add } from '@/api/base/users'
+
+import { permissionslist } from '@/api/base/permissions.js'
+
 export default {
   name: 'usersAdd',
-  props: [
-    'text',
-    'pageTitle',
-    'PermissionGroupsList',
-    'formBase',
-    'ruleInline'
-  ],
+  props: {
+    visible: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
-      dialogFormVisible: false
+      ruleForm: {
+        password: '',
+        username: '',
+        email: '',
+        phone: '',
+        permission_group_id: '',
+        avatar: '',
+        role: '',
+        sex: ''
+      },
+      PermissionGroupsList: []
       // fileList: [],
       // importFileUrl: 'https://jsonplaceholder.typicode.com/posts/',
     }
   },
-  computed: {},
+  computed: {
+    title () {
+      return this.ruleForm.id ? '编辑用户' : '新建用户'
+    }
+  },
   methods: {
     // 弹层显示
-    dialogFormV () {
-      this.dialogFormVisible = true
-    },
+    // dialogFormV () {
+    //   this.dialogFormVisible = true
+    // },
     // 弹层隐藏
-    dialogFormH () {
-      this.dialogFormVisible = false
+    handerclose () {
+      // this.handleClose()
+      this.$emit('update:visible', false)
+      this.$refs.dataForm.resetFields()
+      this.ruleForm = {
+        password: '',
+        username: '',
+        email: '',
+        phone: '',
+        permission_group_id: '',
+        avatar: '',
+        sex: ''
+      }
     },
     // 退出
     handleClose () {
-      this.$emit('handleCloseModal')
+      this.handerclose()
+      // this.$emit('update:visible', false)
+      // this.$refs.dataForm.validate()
     },
-
     // 表单提交
-    createData () {
-      this.$refs.dataForm.validate(valid => {
-        if (valid) {
-          this.$emit('handleCloseModal')
-          const data = {
-            ...this.formBase
-          }
-          if (this.formBase.id) {
-            update(data).then(() => {
-              this.$emit('newDataes', this.formBase)
-            })
-          } else {
-            add(this.formBase).then(() => {
-              this.$emit('newDataes', this.formBase)
-            })
-          }
-        } else {
-          this.$Message.error('*号为必填项!')
-        }
-      })
+    async createData () {
+      try {
+        this.$refs.dataForm.validate()
+        this.ruleForm.id ? await update(this.ruleForm) : await add(this.ruleForm)
+        this.$message.success('成功')
+        this.$emit('newDataes')
+        this.handleClose()
+      } catch (error) {
+        this.$message.error('失败')
+      }
+    },
+    async  getselete () {
+      const { data } = await permissionslist(this.formBase)
+      // console.log(data.list)
+      this.PermissionGroupsList = data.list
     }
   },
   // 挂载结束

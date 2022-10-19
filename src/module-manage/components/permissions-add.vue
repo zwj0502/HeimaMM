@@ -1,6 +1,6 @@
 <template>
   <div class="add-form">
-    <el-dialog :title="text+pageTitle" :visible.sync="dialogFormVisible">
+    <el-dialog :title="title" :visible="visible" @close="handerclone">
       <el-form
         :rules="ruleInline"
         ref="dataForm"
@@ -38,10 +38,18 @@ import { list } from '@/api/base/menus.js'
 let _this = []
 export default {
   name: 'usersAdd',
-  props: ['text', 'pageTitle', 'ruleInline'],
+  props: ['text', 'pageTitle', 'ruleInline', 'visible', 'id'],
+  watch: {
+    visible () {
+      if (this.visible) {
+        console.log(this.formBase)
+        this.hanldeEditForm()
+      }
+    }
+  },
   data () {
     return {
-      dialogFormVisible: false,
+      // dialogFormVisible: false,
       PermissionGroupsmenu: [],
       defaultProps: {
         label: 'title'
@@ -59,6 +67,7 @@ export default {
   },
   computed: {
     treeData () {
+      console.log(2222)
       function createNode (item) {
         // 复选框选择
         let checked = false
@@ -110,21 +119,35 @@ export default {
       }
       const nodes = createNode({ title: '系统菜单和页面权限点', expand: true })
       parseNodes(this.PermissionGroupsmenu, nodes)
+      console.log(nodes)
       return [nodes]
+    },
+    title () {
+      return this.id ? '修改' : '新建'
     }
   },
   methods: {
     // 弹层显示
-    dialogFormV () {
-      this.dialogFormVisible = true
-    },
+    // dialogFormV () {
+    //   this.dialogFormVisible = true
+    // },
     // 弹层隐藏
-    dialogFormH () {
-      this.dialogFormVisible = false
+    handerclone () {
+      // this.dialogFormVisible = false
+      this.$emit('update:visible', false)
+      this.$refs.dataForm.validate()
+      this.handleResetForm()
+      this.$emit('saveId')
+      this.formBase = {
+        id: '',
+        create_date: '',
+        title: '',
+        permissions: []
+      }
     },
     // 退出
     handleClose () {
-      this.$emit('handleCloseModal')
+      this.handerclone()
     },
     // 表单重置
     handleResetForm () {
@@ -136,9 +159,12 @@ export default {
     },
     // 编辑详情数据加载
     hanldeEditForm (objeditId) {
+      if (!this.id) {
+        return
+      }
       this.formBase.id = objeditId
       var data = {
-        id: objeditId
+        id: this.id
       }
       detail(data).then((ret, err) => {
         if (err) {
@@ -152,6 +178,8 @@ export default {
     setupData () {
       list().then(data => {
         this.PermissionGroupsmenu = data.data
+        console.log(1111111)
+        // this.parentNode()
       })
     },
 
@@ -225,14 +253,18 @@ export default {
               permissions: curPermis
             }
             update(data).then(() => {
-              this.$emit('newDataes', this.formBase)
+              this.$emit('newDataes')
+              this.$message.success('编辑成功')
+              this.handerclone()
             })
           } else {
             add({
               title: this.formBase.title,
               permissions: curPermis
             }).then(() => {
-              this.$emit('newDataes', this.formBase)
+              this.$emit('newDataes')
+              this.$message.success('新增成功')
+              this.handerclone()
             })
           }
         } else {
@@ -243,7 +275,9 @@ export default {
   },
   // 挂载结束
 
-  mounted: function () {},
+  mounted: function () {
+
+  },
   // 创建完毕状态
   created () {
     _this = this
