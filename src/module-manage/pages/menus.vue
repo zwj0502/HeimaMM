@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-button type="primary" @click="visible = true" :PermissionGroupsList="tableData">新建</el-button>
+    <el-button style="float:right;width: 150px;margin: 20px;"  type="success"  icon="el-icon-edit" @click="visible = true" :PermissionGroupsList="tableData">新建菜单权限</el-button>
     <template>
   <el-table
     :data="tableData"
@@ -94,14 +94,15 @@ export default {
     //   }
     // },
     async deleteBtn (row) {
-      this.$confirm('此操作将永久删除该权限,是否继续?', '提示', {
-        type: 'warning',
-        center: true
-      }).then(() => {
-        remove(row)
-        this.getmenus()
-        this.$message.success('删除成功!')
-      })
+      // this.$confirm('此操作将永久删除该权限,是否继续?', '提示', {
+      //   type: 'warning',
+      //   center: true
+      // }).then(() => {
+      await remove(row)
+      this.$message.success('删除成功!')
+      this.getmenus()
+
+      // })
     }
   }
 }
