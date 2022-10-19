@@ -13,7 +13,8 @@
     <el-button type="primary" @click="searchBtn">查询</el-button>
   </el-form-item>
 </el-form></el-col>
-  <el-col :span="8"><el-button type="primary" @click="visible = true">新建</el-button></el-col>
+  <!-- <el-col :span="8"><el-button type="primary" @click="visible = true">新建</el-button></el-col> -->
+  <el-button  icon="el-icon-edit"  style="float:right" type="success" @click="visible = true">新增用户</el-button>
 </el-row>
 <el-alert
     :title="title"
@@ -61,14 +62,21 @@
       label="操作"
       width="150">
       <template slot-scope="{row}">
-        <el-button type="primary" icon="el-icon-edit" circle @click="editorBtn(row)" ></el-button>
-        <el-button type="danger" icon="el-icon-delete" circle  @click="deleteBtn(row)" ></el-button>
+        <el-button plain type="primary" icon="el-icon-edit" circle @click="editorBtn(row)" ></el-button>
+        <el-button plain type="danger" icon="el-icon-delete" circle  @click="deleteBtn(row)" ></el-button>
         <!-- <el-button type="primary" icon="el-icon-edit" circle @click="editorBtn(row)" ></el-button> -->
       </template>
     </el-table-column>
   </el-table>
 </template>
-<pagetool :total="page"></pagetool>
+<pagetool
+style="float:right;margin: 20px;"
+ :total.sync="count"
+ :paginationPagesize.sync="formInline.pagesize"
+ :paginationPage.sync="formInline.page"
+ @pageChange="pageChange"
+ @pageSizeChange="pageSizeChange"
+ />
 <userAdd ref="userAdd" :visible.sync="visible"  @newDataes="getuserInfo"></userAdd>
     </el-card>
   </div>
@@ -78,6 +86,7 @@ import { list, remove } from '@/api/base/users.js'
 import pagetool from '../components/page-tool.vue'
 import userAdd from '../components/user-add.vue'
 export default {
+  name: 'users',
   components: {
     pagetool, userAdd
   },
@@ -88,7 +97,9 @@ export default {
         pagesize: 10,
         keyword: ''
       },
-      page: '0',
+      count: 0,
+      // page: 1,
+      // pagesize: 10,
       userInfo: [],
       visible: false
     }
@@ -103,7 +114,9 @@ export default {
       const { data } = await list(this.formInline)
       console.log(data)
       this.userInfo = data.list
-      this.page = data.page
+      this.formInline.page = data.page
+      this.count = data.counts
+      this.formInline.pagesize = data.pagesize
     },
     editorBtn (row) {
       // eslint-disable-next-line camelcase
@@ -143,11 +156,27 @@ export default {
           this.getuserInfo()
         }
       })
+    },
+    async pageChange (node) {
+      this.formInline.page = node
+      const { data } = await list(this.formInline)
+      // console.log(data)
+      this.userInfo = data.list
+      // this.page = data.page
+      // this.count = data.counts
+      // this.pagesize = data.pagesize
+      // console.log(node)
+    },
+    async pageSizeChange (node) {
+      this.formInline.pagesize = node
+      const { data } = await list(this.formInline)
+      console.log(data)
+      this.userInfo = data.list
     }
   },
   computed: {
     title () {
-      return '共' + this.page + '条数据'
+      return '共' + this.count + '条数据'
     }
   }
 }

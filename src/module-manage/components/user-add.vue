@@ -5,22 +5,38 @@
   <!-- <el-form-item label="账号" prop="account">
     <el-input v-model="ruleForm.account"></el-input>
   </el-form-item> -->
-  <el-form-item label="密码" prop="password">
-    <el-input v-model="ruleForm.password"></el-input>
-  </el-form-item>
-  <el-form-item label="姓名" prop="username">
+  <el-form-item label="用户名" prop="username" :rules="[
+      { required: true, message: '请输入用户名', trigger: 'blur' }
+    ]">
     <el-input v-model="ruleForm.username"></el-input>
   </el-form-item>
-  <el-form-item label="角色" prop="role">
+  <el-form-item label="密码" prop="password" :rules="[
+      { required: true, message: '请输入密码', trigger: 'blur' }
+    ]" >
+    <el-input v-model="ruleForm.password"></el-input>
+  </el-form-item>
+
+  <el-form-item label="角色" prop="role" :rules="[
+      { required: true, message: '请输入角色', trigger: 'blur' }
+    ]">
     <el-input v-model="ruleForm.role"></el-input>
   </el-form-item>
-  <el-form-item label="联系电话" prop="phone">
+  <el-form-item label="联系电话" prop="phone" :rules="[
+      { required: true, message: '请输入联系电话', trigger: 'blur' }
+    ]">
     <el-input v-model="ruleForm.phone"></el-input>
   </el-form-item>
-  <el-form-item label="邮箱" prop="email">
-    <el-input v-model="ruleForm.email"></el-input>
+  <el-form-item label="邮箱" prop="email"  :rules="[
+      { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+      { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+    ]">
+    <el-input v-model="ruleForm.email"
+
+    ></el-input>
   </el-form-item>
-  <el-form-item label="权限组" prop="permission_group_id">
+  <el-form-item label="权限组" prop="permission_group_id" :rules="[
+      { required: true, message: '请输入角色', trigger: 'blur' }
+    ]">
     <el-select v-model="ruleForm.permission_group_id" placeholder="权限组id" @focus="getselete">
       <el-option v-for="item in  PermissionGroupsList" :key="item.id" :label="item.title" :value="item.id"></el-option>
     </el-select>
@@ -56,7 +72,8 @@ export default {
         phone: '',
         permission_group_id: '',
         avatar: '',
-        role: ''
+        role: '',
+        sex: ''
       },
       PermissionGroupsList: []
       // fileList: [],
@@ -77,14 +94,15 @@ export default {
     handerclose () {
       // this.handleClose()
       this.$emit('update:visible', false)
-      this.$refs.dataForm.validate()
+      this.$refs.dataForm.resetFields()
       this.ruleForm = {
         password: '',
         username: '',
         email: '',
         phone: '',
         permission_group_id: '',
-        avatar: ''
+        avatar: '',
+        sex: ''
       }
     },
     // 退出
@@ -96,10 +114,10 @@ export default {
     // 表单提交
     async createData () {
       try {
+        this.$refs.dataForm.validate()
         this.ruleForm.id ? await update(this.ruleForm) : await add(this.ruleForm)
         this.$message.success('成功')
         this.$emit('newDataes')
-
         this.handleClose()
       } catch (error) {
         this.$message.error('失败')

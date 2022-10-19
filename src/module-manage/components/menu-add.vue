@@ -1,10 +1,10 @@
 <template>
   <div class="add-form">
-    <el-dialog :title="text+pageTitle" :visible.sync="dialogFormVisible">
+    <el-dialog :destroy-on-close="true" title="123" :visible="visible" @close="dialogFormH" @closed="handleResetForm">
     <el-form :rules="ruleInline" ref="formMenu" :model="formMenu" label-position="left" label-width="120px" style='width: 400px; margin-left:120px;'>
-          <el-form-item :label="$t('table.permissionUser')">
-              <el-radio-group v-model="type" class="choose-type" @change="handleChooseType">
-                <el-radio label="menu" class="choose-item" :disabled="typeStatus">菜单</el-radio>
+       <el-form-item :label="$t('table.permissionUser')">
+              <el-radio-group   v-model="type" class="choose-type" @change="handleChooseType">
+                <el-radio  label="menu" class="choose-item" :disabled="typeStatus">菜单</el-radio>
                 <el-radio label="points" class="choose-item" :disabled="typeStatus">权限点</el-radio>
               </el-radio-group>
           </el-form-item>
@@ -16,22 +16,22 @@
               </el-select>
 
             </el-form-item>
-          <div v-if="showMenuBlock">
+          <!-- <div v-if="showMenuBlock">? -->
             <el-form-item :label="$t('table.powerCode')" prop="code">
               <el-input v-model="formMenu.code"></el-input>
             </el-form-item>
             <el-form-item :label="$t('table.powerTitle')" prop="title">
               <el-input v-model="formMenu.title"></el-input>
             </el-form-item>
-          </div>
-          <div v-if="showPointBlock" :model="formPoints">
+          <!-- </div> -->
+          <!-- <div v-if="showPointBlock" :model="formPoints">
             <el-form-item :label="$t('table.powerCode')" prop="code">
               <el-input v-model="formPoints.code"></el-input>
             </el-form-item>
             <el-form-item :label="$t('table.powerTitle')" prop="title">
               <el-input v-model="formPoints.title"></el-input>
             </el-form-item>
-          </div>
+          </div> -->
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="handleClose">{{$t('table.cancel')}}</el-button>
@@ -47,9 +47,9 @@ import Utils from '@/components/TreeTable/utils/dataTranslate.js'
 let _this = []
 export default {
   name: 'items',
-  // props: ['text', 'pageTitle', 'PermissionGroupsList',],
+  // props: ['text', 'pageTitle', 'PermissionGroupsList'],
   props: {
-    treeStructure: {
+    visible: {
       type: Boolean,
       default: function () {
         return false
@@ -138,7 +138,10 @@ export default {
     },
     // 弹层隐藏
     dialogFormH () {
-      this.dialogFormVisible = false
+      // this.dialogFormVisible = false
+      this.$emit('update:visible', false)
+      this.handleResetForm()
+      // this.handleResetForm()
     },
     handleChooseType () {
       if (this.type === 'menu') {
@@ -175,18 +178,18 @@ export default {
       changeAray(_this.parentDataList)
     },
     changeToMenu () {
-      _this.showMenuBlock = true
-      _this.showPointBlock = false
+      // _this.showMenuBlock = true
+      // _this.showPointBlock = false
       _this.notPointDataList = []
       this.changeArays()
     },
     changeToPoints () {
-      _this.showMenuBlock = false
-      _this.showPointBlock = true
-      _this.formMenu = _this.formPoints
-      _this.formMenu.pid = _this.formPoints.pid
-      _this.formMenu.code = _this.formPoints.code
-      _this.formMenu.title = _this.formPoints.title
+      // _this.showMenuBlock = false
+      // _this.showPointBlock = true
+      // _this.formMenu = _this.formPoints
+      // _this.formMenu.pid = _this.formPoints.pid
+      // _this.formMenu.code = _this.formPoints.code
+      // _this.formMenu.title = _this.formPoints.title
       _this.notPointDataList = []
       this.changeArays()
     },
@@ -206,8 +209,9 @@ export default {
       add(this.formMenu).then(() => {
         _this.handleResetForm()
         // _this.type = 'menu'
-        this.$emit('handleCloseModal')
-        this.$emit('newDataes', this.formMenu)
+        // this.$emit('handleCloseModal')
+        _this.dialogFormH()
+        this.$emit('newDataes')
       })
     },
     handle_Add (object) {
@@ -221,6 +225,7 @@ export default {
     },
     // 表单提交
     handleSubmit (object) {
+      console.log(111)
       _this.formMenu.pid = Number(_this.formMenu.pid)
       if (_this.formMenu.id) {
         var thisCode = _this.formMenu.code // 输入的code值
@@ -261,6 +266,7 @@ export default {
       }
     },
     hanldeEditForm (objeditId) {
+      console.log(2222)
       this.formMenu.id = objeditId
       list().then(data => {
         _this.parentDataList = data.data
@@ -275,6 +281,7 @@ export default {
         this.formMenu.code = data.data.code
         this.formMenu.is_point = data.data.is_point
         const responseData = data.data
+        this.changeType(!this.formMenu.is_point ? 'menu' : 'points')
         const choose = this.type
         if (choose === 'points') {
           this.formMenu.code = data.data.code
@@ -305,6 +312,8 @@ export default {
   // 创建完毕状态
   created () {
     _this = this
+    // this.hanldeEditForm()
+    this.handleResetForm()
   },
   // 组件更新
   updated: function () {}

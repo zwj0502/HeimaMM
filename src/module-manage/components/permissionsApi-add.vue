@@ -1,6 +1,6 @@
 <template>
   <div class="add-form">
-    <el-dialog :title="apiTitle" :visible.sync="dialogFormVisible">
+    <el-dialog :title="apiTitle" :visible.sync="visible">
     <el-form :rules="ruleInline" ref="dataForm" :model="formBase" label-position="left" label-width="120px" style='width: 400px; margin-left:120px;'>
           <el-form-item :label="$t('table.powerTitle')" prop="title">
             <el-input v-model="formBase.title"></el-input>
@@ -30,10 +30,10 @@ import { list } from '@/api/base/menus.js'
 let _this = []
 export default {
   name: 'PermissionGroupsApiAdd',
-  props: ['apiTitle', 'ruleInline'],
+  props: ['apiTitle', 'ruleInline', 'visible'],
   data () {
     return {
-      dialogFormVisible: false,
+      // dialogFormVisible: false,
       PermissionGroupsmenu: [],
       defaultProps: {
         label: 'title'
