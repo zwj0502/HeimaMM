@@ -10,7 +10,7 @@
 import { createAPI } from '@/utils/request'
 
 // 学科列表
-export const list = data => createAPI('/subjects', 'get', data)
+export const subjectlist = data => createAPI('/subjects', 'get', data)
 
 // 学科简单列表
 export const simple = data => createAPI('/subjects/simple', 'get', data)

@@ -10,7 +10,7 @@
 import { createAPI } from '@/utils/request'
 
 // 基础题库列表
-export const list = data => createAPI('/questions', 'get', data)
+export const questionlist = data => createAPI('/questions', 'get', data)
 
 // 基础题库详情
 export const detail = data => createAPI(`/questions/${data.id}`, 'get', data)
